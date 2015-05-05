@@ -15,3 +15,27 @@ project/plugins/project/
 # Scala-IDE specific
 .scala_dependencies
 .worksheet
+
+
+
+#server ignore
+server/.cache
+server/.history
+server/.lib/
+server/dist/*
+server/target/
+server/lib_managed/
+server/src_managed/
+server/project/boot/
+server/project/plugins/project/
+
+#server ignore
+client/.cache
+client/.history
+client/.lib/
+client/dist/*
+client/target/
+client/lib_managed/
+client/src_managed/
+client/project/boot/
+client/project/plugins/project/
