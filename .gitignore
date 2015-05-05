@@ -28,8 +28,10 @@ server/lib_managed/
 server/src_managed/
 server/project/boot/
 server/project/plugins/project/
+server/.idea
+server/.idea_modules
 
-#server ignore
+#client ignore
 client/.cache
 client/.history
 client/.lib/
@@ -39,3 +41,6 @@ client/lib_managed/
 client/src_managed/
 client/project/boot/
 client/project/plugins/project/
+client/.idea
+client/.idea_modules
+
