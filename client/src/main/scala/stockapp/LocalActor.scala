@@ -18,6 +18,8 @@ case class StockRequest(symbol:String)
 
 @SerialVersionUID(15l)
 case  class Message(message:String)
+
+@SerialVersionUID(16l) case class StockSubScribeRequest(symbol:String)
  class LocalActor extends Actor {
 
 
@@ -31,7 +33,7 @@ case  class Message(message:String)
 
     case  StockPrice(symbol, price) =>{
 
-      println("stock price received is:" + price)
+      println("stock price received for "+symbol+" is" + price)
     }
     case  message:String=>{
 
@@ -50,21 +52,35 @@ case  class Message(message:String)
 object ClientApp {
 
   def main(args: Array[String]) {
-
-
-
-
-
-
     import scala.concurrent.duration._
     val clientConfigFile = getClass.getClassLoader.getResource("application.conf").getFile
     val clientConfig = ConfigFactory.parseFile(new File(clientConfigFile))
     val clientsystem = ActorSystem("ClientSystem",clientConfig)
     val stockClient = clientsystem.actorOf(Props[LocalActor],name="stockClient")
     val remoteActor = clientsystem.actorFor("akka.tcp://RemoteSystem@10.189.172.199:5150/user/stockServer")
+    val symbols = List("INFY","TCS","AAPL","GOOG","MRF","TATA-STEEL","TATA-MOTORS","HINDALCO","WIPRO")
 
-    clientsystem.scheduler.schedule(0.seconds, 3.second, remoteActor,StockRequest("Infy") )(clientsystem.dispatcher, stockClient)
+    //intial subscription requests for each stock quote
+    symbols.foreach(s=> {
+    clientsystem.scheduler.scheduleOnce(1.seconds,remoteActor, StockSubScribeRequest(s))(clientsystem.dispatcher, stockClient)
+    })
+
+    //stock price request schedular
+    symbols.foreach(s=> {
+      clientsystem.scheduler.schedule(5.seconds, 3.second, remoteActor, StockRequest(s))(clientsystem.dispatcher, stockClient)
+    })
+  }
+}
+case class StockSubscribeRequestGenerator() extends Actor{
+  val symbols = List("INFY","TCS","AAPL","GOOG","MRF","TATA-STEEL","TATA-MOTORS","HINDALCO","WIPRO")
+  def generateSubscribeRequest()= {
+
+    //util.Random.shuffle(symbols).head
+    println("In subscribe request method")
+    StockSubScribeRequest("INFY")
   }
 
-
+  override def receive: Actor.Receive = {
+    case msg:String => generateSubscribeRequest()
+  }
 }
