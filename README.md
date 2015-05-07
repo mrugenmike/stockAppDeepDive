@@ -14,6 +14,5 @@ CMPE 275 Deep Dive Project with Scala.
 > sbt clean compile
 > sbt run
 ```
-* This shall start the client to open communication with specified server in the client/src/main/resources/application.conf
 
 
