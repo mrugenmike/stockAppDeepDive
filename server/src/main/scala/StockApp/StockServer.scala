@@ -1,7 +1,7 @@
 package stockapp
 
 import java.io.File
-import java.util.Random
+import java.util.{Date, Random}
 
 import akka.actor._
 import akka.event.EventStream
@@ -62,8 +62,6 @@ class StockHandler extends Actor{
      stockSymbol = self.path.name
      context.system.eventStream.subscribe(self,classOf[StockPrice])
   }
-
-
   override def receive: Actor.Receive = {
 
     case SubscribeForSymbol(symbol) =>{
@@ -73,9 +71,9 @@ class StockHandler extends Actor{
       symbol.equals(stockSymbol) match{
         case true=> {
           //update current stock price
-          lastStockPrice =StockPrice(symbol,price)
+          lastStockPrice = StockPrice(symbol,price)
           //intimate all subscribers
-          println("received update for symbol %s - Broadcasting to all subscribers".format(symbol))
+          println("received update for symbol %s - Broadcasting to all subscribers at time %s".format(symbol,System.currentTimeMillis()))
           clients.foreach(a=>a ! StockPrice(symbol,price))}
         case _ => //Not my symbol ignore the stock update
       }
@@ -97,7 +95,11 @@ case class StockPricePublisher() extends Actor{
   }
 
   override def receive: Actor.Receive = {
-    case msg:String => context.system.eventStream.publish(generateStockPrice())
+    case msg:String => {
+      val generatedStockPrice: StockPrice = generateStockPrice()
+      System.out.println("Publishing the generated stockprice %s at time %s ".format(generatedStockPrice,System.currentTimeMillis()))
+      context.system.eventStream.publish(generatedStockPrice)
+    }
   }
 }
 

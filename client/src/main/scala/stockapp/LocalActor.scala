@@ -1,6 +1,7 @@
 package stockapp
 
 import java.io.File
+import java.util.Date
 import java.util.concurrent.TimeUnit
 
 import akka.actor._
@@ -33,7 +34,7 @@ case  class Message(message:String)
 
     case  StockPrice(symbol, price) =>{
 
-      println("stock price received for "+symbol+" is" + price)
+      println("stock price received for "+symbol+" is" + price+" at time %s".format(new Date()))
     }
     case  message:String=>{
 
@@ -57,7 +58,7 @@ object ClientApp {
     val clientConfig = ConfigFactory.parseFile(new File(clientConfigFile))
     val clientsystem = ActorSystem("ClientSystem",clientConfig)
     val stockClient = clientsystem.actorOf(Props[LocalActor],name="stockClient")
-    val remoteActor = clientsystem.actorFor("akka.tcp://RemoteSystem@10.189.29.181:5150/user/stockServer")
+    val remoteActor = clientsystem.actorFor("akka.tcp://RemoteSystem@10.189.136.55:5150/user/stockServer")
     val symbols = List("INFY","TCS","AAPL","GOOG","MRF","TATA-STEEL","TATA-MOTORS","HINDALCO","WIPRO")
 
     //intial subscription requests for each stock quote
