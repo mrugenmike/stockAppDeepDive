@@ -57,7 +57,7 @@ object ClientApp {
     val clientConfig = ConfigFactory.parseFile(new File(clientConfigFile))
     val clientsystem = ActorSystem("ClientSystem",clientConfig)
     val stockClient = clientsystem.actorOf(Props[LocalActor],name="stockClient")
-    val remoteActor = clientsystem.actorFor("akka.tcp://RemoteSystem@10.189.172.199:5150/user/stockServer")
+    val remoteActor = clientsystem.actorFor("akka.tcp://RemoteSystem@10.189.29.181:5150/user/stockServer")
     val symbols = List("INFY","TCS","AAPL","GOOG","MRF","TATA-STEEL","TATA-MOTORS","HINDALCO","WIPRO")
 
     //intial subscription requests for each stock quote
